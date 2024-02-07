@@ -7,8 +7,8 @@
 #include <TridentTD_LineNotify.h>
 #include <WiFi.h>
 
-#define SSID "DX100"               
-#define PASSWORD "11111111"                      
+#define SSID "Napat.bike"               
+#define PASSWORD "tqhp8222"                      
 #define LINE_TOKEN "HUZldWYLqry1RakCi7gxmgTzjdxccHUwrrvApBWWs05"
 
 
@@ -53,44 +53,46 @@ void setup() {
 
   //lcd.begin(16, 2);
   
-  Blynk.begin(BLYNK_AUTH_TOKEN, SSID, PASSWORD);
+  //Blynk.begin(BLYNK_AUTH_TOKEN, SSID, PASSWORD);
 
-  WiFi.begin(SSID, PASSWORD);
-  Serial.printf("WiFi connecting to %s\n",  SSID);
-  while (WiFi.status() != WL_CONNECTED) {
-    Serial.print(".");
-    delay(400);
-  }
+  //WiFi.begin(SSID, PASSWORD);
+  //Serial.printf("WiFi connecting to %s\n",  SSID);
+  //while (WiFi.status() != WL_CONNECTED) {
+   // Serial.print(".");
+  //  delay(400);
+  //}
   //Serial.printf("\nWiFi connected\nIP : ");
   //Serial.println(WiFi.localIP());
-  Serial.println("");
-  Serial.println("WiFi connected");
+  //Serial.println("");
+  //Serial.println("WiFi connected");
 
   LINE.setToken(LINE_TOKEN);
   LINE.notify("line work");
   LINE.notifyPicture("https://cdn.discordapp.com/attachments/1196691631307501568/1204732285904224318/image.png?ex=65d5cd5f&is=65c3585f&hm=529883797b6392e8da0a67dc15fdf838c85559d196ff11f8a0f48c56a41d0f49&");
   Serial.begin(115200);
+  Blynk.begin(BLYNK_AUTH_TOKEN, SSID, PASSWORD);
+
 }
 void DHT() {
   //dht
   temperature = dht.readTemperature();
   humidity = dht.readHumidity();
-  //char mix_temp_humi[50];
-  //sprintf(mix_temp_humi, "Temperature %d \n Humidity %d", temperature ,humidity);
 
   Serial.print("temperature : ");
   Serial.println(temperature);
-  Blynk.virtualWrite(V2,temperature);
+  
   Serial.print("humidity :");
   Serial.println(humidity);
+  Blynk.virtualWrite(V4,humidity); 
   
 }
 void ultra() { 
-  long distance = hc.dist();
+  float distance = hc.dist();
   //float distance1 = (float)distance/11.0 * 100.0;
   float distance1 = map(distance,2,13,100,0);
   Blynk.virtualWrite(V1,distance1);
-  if (distance <= 30){
+  if (distance1 <= 30){
+    digitalWrite(Relay1,LOW);
     LINE.notify("เติมน้ำ");
     
   }
@@ -109,9 +111,9 @@ void soi_moisture_and_rod_nam() {//ความขื้นในดิน
   moisture =map(moisture, 2890,1000,0,100);
   Serial.print("Moisture in soi value: ");
   Serial.println(moisture);
-  Blynk.virtualWrite(V4,moisture); 
+  //Blynk.virtualWrite(V4,moisture); 
   delay(500);
-  if(moisture<=75){
+  if(humidity<=75){
     digitalWrite(Relay1,HIGH);
     } 
   else{
@@ -157,8 +159,10 @@ void loop() {
   else{
     //digitalWrite(Relay1,LOW);
   }
-  char mix_temp_humi[100];
-  sprintf(mix_temp_humi, "%d 'C | Humi %d | L %d", temperature ,humidity ,val_ldr);
+  char mix_temp_humi[150];
+  sprintf(mix_temp_humi, "%.2f 'C | Humi %.2f | L %d | Soil %.2f %%", temperature ,humidity ,val_ldr,moisture);
+  Serial.print(mix_temp_humi);
+  delay(400);
   Blynk.virtualWrite(V2,mix_temp_humi);
   /*
   lcd.setCursor(0, 0);
