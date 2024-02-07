@@ -108,7 +108,7 @@ void fillSolidColor(uint32_t color) { //neopixel
 }
 void soi_moisture_and_rod_nam() {//ความขื้นในดิน
   moisture = analogRead(SOI_PIN); // read the analog value from sensor
-  moisture =map(moisture, 2890,1000,0,100);
+  moisture =map(moisture, 3000,1000,0,100);
   Serial.print("Moisture in soi value: ");
   Serial.println(moisture);
   //Blynk.virtualWrite(V4,moisture); 
