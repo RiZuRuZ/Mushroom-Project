@@ -16,7 +16,7 @@
 #define DHTPIN 15   // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT11   // DHT sensor type
 DHT dht(DHTPIN, DHTTYPE);
-int moisture;
+float moisture;
 float temperature;
 float humidity;
 
